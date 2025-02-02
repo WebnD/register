@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "WebnD Induction Registration",
   description: "Generated for collecting registrations for WebnD Induction",
+  icons: {
+    icon: '/logo.png', // Favicon added here
+  },
 };
 
 export default function RootLayout({
