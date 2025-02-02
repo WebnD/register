@@ -1,11 +1,13 @@
+import { ID } from "node-appwrite";
 import { database } from "./appwrite.config";
 
 export async function CreateRegister(data: Register){
     try{
+        const id = ID.unique();
         await database.createDocument(
             process.env.DATABASE_ID!,
             process.env.REGISTER_ID!,
-            "unique()",
+            id,
             {
                 name: data.name,
                 email: data.email,
@@ -15,6 +17,7 @@ export async function CreateRegister(data: Register){
                 projects: data.projects
             }
         )
+        return id;
     }catch(error){
         console.error("Faailed to register: ", error);
     }
