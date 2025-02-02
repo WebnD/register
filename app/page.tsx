@@ -39,7 +39,7 @@ export default function EventPage() {
       if (!response.ok) throw new Error('Failed to submit')
       
       setOpen(false)
-      alert('Registration successful!')
+      alert('Registration successful!\nPlease check email for the QR Code!');
     } catch (error) {
       console.error(error)
       alert('Registration failed. Please try again.')

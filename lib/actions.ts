@@ -14,7 +14,9 @@ export async function CreateRegister(data: Register){
                 roll: data.roll,
                 phone: data.phone,
                 reason: data.reason,
-                projects: data.projects
+                projects: data.projects,
+                status: "not-checked-in",
+                time: new Date()
             }
         )
         return id;
