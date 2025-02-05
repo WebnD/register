@@ -54,19 +54,19 @@ export default function EventPage() {
         <div className="grid gap-8 md:grid-cols-2 md:mt-[25vh]">
           <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-white p-6">
             <Image
-              src="/cover.jpg"
+              src="/INDUCTIONS.png"
               alt="You are invited"
               fill
               className="object-contain"
             />
           </div>
           <div className="space-y-6">
-            <h1 className="text-4xl font-bold text-[#76232F]">WebD Induction</h1>
+            <h1 className="text-4xl font-bold text-[#76232F]">WebnD Induction</h1>
 
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-[#76232F]" />
-                <p>Saturday, February 8</p>
+                <p>Friday, February 7</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -78,14 +78,14 @@ export default function EventPage() {
                 <MapPin className="h-5 w-5 text-[#76232F]" />
                 <div>
                   <p className="font-medium">Lalitgiri Hall of Learning</p>
-                  <p className="text-sm text-muted-foreground">Kansapada, Odisha</p>
+                  <p className="text-sm text-muted-foreground">IIT Bhubaneswar</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
               <h2 className="text-lg font-semibold">Registration</h2>
-              <p className="text-muted-foreground">Welcome! To join the event, please register below.</p>
+              <p className="text-muted-foreground">Welcome! To join our epic society, please register below.</p>
               <Button className="w-full bg-[#76232F] hover:bg-[#76232F]/90" onClick={() => setOpen(true)}>
                 Register
               </Button>
