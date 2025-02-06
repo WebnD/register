@@ -11,10 +11,13 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.5",
     "@radix-ui/react-label": "^2.1.1",
+    "@radix-ui/react-radio-group": "^1.2.3",
+    "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.1",
     "@types/qrcode": "^1.5.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.474.0",
     "next": "14.2.5",
     "node-appwrite": "^15.0.0",

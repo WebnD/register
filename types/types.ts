@@ -6,3 +6,11 @@ interface Register{
       reason: string;
       projects: string;
 }
+
+interface Update{
+  scannedData: string;
+      rating: number;
+      status: string;
+      remarks: string;
+      panelName:string;
+}
