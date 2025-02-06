@@ -36,7 +36,7 @@ export default function InductionProcess({ params }: { params: { panelName: stri
     
           html5QrCode
             .start(
-              "53c38447f45d935665bf40a43e527f40ae25c3ab88285a68089794c28a551383",
+              "e74022265b858b289553639f7a73beddaff8bd294e7d5ac4f2c19288c243001e",
             //   { facingMode: "environment" },
               config,
               (decodedText, decodedResult) => {

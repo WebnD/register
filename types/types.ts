@@ -5,6 +5,11 @@ interface Register{
       phone: string;
       reason: string;
       projects: string;
+      remarks?: string;
+      rating?: number;
+      status?: string;
+      panelName?: string;
+      $id?: string;
 }
 
 interface Update{

@@ -1,5 +1,6 @@
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
 import { database } from "./appwrite.config";
+import { stat } from "fs";
 
 export async function CreateRegister(data: Register){
     try{
@@ -64,4 +65,32 @@ export async function FetchInfo(data: string){
         throw new Error ("Failed to fetch the info");
 
     }
+}
+
+export async function FetchRegistrations(){
+    try{
+        const response = await database.listDocuments(
+            process.env.DATABASE_ID!,
+            process.env.REGISTER_ID!,
+            [Query.equal("status", ["Selected", "Pending", "Rejected"])]
+        );
+
+        const registrations = response.documents;
+        return registrations;
+    }catch(error){
+        console.error("Failed to fetch the registrations: ", error);
+        throw new Error ("Failed to fetch the registrations");
+    }
+}
+
+
+export async function UpdateStatus(id: string, status: string){
+    await database.updateDocument(
+        process.env.DATABASE_ID!,
+            process.env.REGISTER_ID!,
+            id,
+            {
+                status: status
+            }
+    )
 }
