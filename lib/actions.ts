@@ -72,6 +72,7 @@ export async function FetchRegistrations(){
         const response = await database.listDocuments(
             process.env.DATABASE_ID!,
             process.env.REGISTER_ID!,
+            [Query.limit(400)]
         );
 
         const registrations = response.documents;
