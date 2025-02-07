@@ -72,7 +72,6 @@ export async function FetchRegistrations(){
         const response = await database.listDocuments(
             process.env.DATABASE_ID!,
             process.env.REGISTER_ID!,
-            [Query.equal("status", ["Selected", "Pending", "Rejected"])]
         );
 
         const registrations = response.documents;

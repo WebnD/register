@@ -36,8 +36,8 @@ export default function InductionProcess({ params }: { params: { panelName: stri
     
           html5QrCode
             .start(
-              "e74022265b858b289553639f7a73beddaff8bd294e7d5ac4f2c19288c243001e",
-            //   { facingMode: "environment" },
+            
+              { facingMode: "environment" },
               config,
               (decodedText, decodedResult) => {
                 console.log(`Code matched = ${decodedText}`, decodedResult);
