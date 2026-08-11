@@ -8,19 +8,31 @@ export async function POST(req: Request) {
     const { data } = await req.json();
     const result = await CreateRegister(data);
 
-    if (result) {
-      // Generate QR Code
-      const qrCodeBuffer = await QRCode.toBuffer(result);
-      
-      // Send confirmation email
-      await sendRegistrationEmail(data, qrCodeBuffer);
+    // CreateRegister swallows its own errors and returns undefined on failure.
+    // If there's no document id, nothing was saved — do NOT tell the user it worked.
+    if (!result) {
+      return NextResponse.json(
+        { success: false, message: "Could not save your registration. Please try again." },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ success: true, message: "Registration successful" });
+    // The record is saved; email is best-effort. A mail hiccup must not make a
+    // genuinely-registered person think they failed (and re-register a duplicate).
+    let emailSent = true;
+    try {
+      const qrCodeBuffer = await QRCode.toBuffer(result);
+      await sendRegistrationEmail(data, qrCodeBuffer);
+    } catch (mailError) {
+      emailSent = false;
+      console.error("Registration saved but email failed:", mailError);
+    }
+
+    return NextResponse.json({ success: true, emailSent, message: "Registration successful" });
   } catch (error: any) {
     console.error("Registration failed", error);
-    return NextResponse.json({ 
-      success: false, 
+    return NextResponse.json({
+      success: false,
       message: error.message || "An error occurred during registration"
     });
   }
