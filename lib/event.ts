@@ -6,7 +6,7 @@ export const EVENT = {
   campus: "IIT Bhubaneswar",
   days: [
     { label: "Day 1", date: "16 August 2026", time: "10:00 AM – 1:00 PM" },
-    { label: "Day 2", date: "17 August 2026", time: "6:00 PM – 9:00 PM" },
-    { label: "Day 3", date: "19 August 2026", time: "6:00 PM – 9:00 PM" },
+    { label: "Day 2", date: "17 August 2026", time: "5:30 PM – 9:00 PM" },
+    { label: "Day 3", date: "19 August 2026", time: "5:30 PM – 9:00 PM" },
   ],
 }
