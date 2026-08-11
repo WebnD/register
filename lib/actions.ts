@@ -1,12 +1,15 @@
 import { ID, Query } from "node-appwrite";
 import { database } from "./appwrite.config";
 
+const DATABASE_ID = process.env.DATABASE_ID!;
+const REGISTER_ID = process.env.REGISTER_ID!;
+
 export async function CreateRegister(data: Register) {
   try {
     const id = ID.unique();
     await database.createDocument(
-      process.env.DATABASE_ID!,
-      process.env.REGISTER_ID!,
+      DATABASE_ID,
+      REGISTER_ID,
       id,
       {
         name: data.name,
@@ -33,8 +36,8 @@ export async function CreateRegister(data: Register) {
 export async function MarkAttendance(data: Attendance) {
   try {
     const existing = await database.getDocument(
-      process.env.DATABASE_ID!,
-      process.env.REGISTER_ID!,
+      DATABASE_ID,
+      REGISTER_ID,
       data.scannedData
     );
 
@@ -43,8 +46,8 @@ export async function MarkAttendance(data: Attendance) {
     }
 
     const updated = await database.updateDocument(
-      process.env.DATABASE_ID!,
-      process.env.REGISTER_ID!,
+      DATABASE_ID,
+      REGISTER_ID,
       data.scannedData,
       {
         attended: true,
@@ -63,8 +66,8 @@ export async function MarkAttendance(data: Attendance) {
 export async function FetchInfo(id: string) {
   try {
     const response = await database.getDocument(
-      process.env.DATABASE_ID!,
-      process.env.REGISTER_ID!,
+      DATABASE_ID,
+      REGISTER_ID,
       id
     );
     return response;
@@ -77,8 +80,8 @@ export async function FetchInfo(id: string) {
 export async function FetchRegistrations() {
   try {
     const response = await database.listDocuments(
-      process.env.DATABASE_ID!,
-      process.env.REGISTER_ID!,
+      DATABASE_ID,
+      REGISTER_ID,
       [Query.limit(1000), Query.orderDesc("time")]
     );
     return response.documents;
