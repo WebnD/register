@@ -26,6 +26,8 @@ export const EVENT = {
     { key: "day2", label: "Day 2", date: "17 August 2026", iso: "2026-08-17", time: "5:30 PM – 9:00 PM" },
     { key: "day3", label: "Day 3", date: "19 August 2026", iso: "2026-08-19", time: "5:30 PM – 9:00 PM" },
   ] as EventDay[],
+
+  WhatsappGroupLink: "https://chat.whatsapp.com/CHhIzCIyEIi6DC4zQEXaWG?s=qt&p=a&ilr=4",
 }
 
 // All valid day keys, in order.
