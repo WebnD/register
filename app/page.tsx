@@ -94,107 +94,122 @@ export default function EventPage() {
                 Register
               </Button>
             </div>
+            <div className="rounded-2xl border border-muted-foreground/40 bg-white/80 p-4 shadow-sm">
+              <p className="text-sm text-[#76232F]">
+                Join the WhatsApp group for further discussions and participate in ongoing quizzes and sessions.
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                <a
+                  href={EVENT.WhatsappGroupLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-[#76232F] underline hover:text-[#4f1720]"
+                >
+                  Click here to join the group
+                </a>{' '}
+              
+              </p>
+            </div>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[425px] custom-scrollbar">
+                <DialogHeader>
+                  <DialogTitle>Register for the Bootcamp</DialogTitle>
+                </DialogHeader>
+                <form ref={formRef} className="space-y-6 py-4" onSubmit={handleSubmit}>
+                  <div className="space-y-2">
+                    <Label htmlFor="name">
+                      Name <span className="text-red-500">*</span>
+                    </Label>
+                    <Input id="name" name="name" placeholder="Your Name" required />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">
+                      Email <span className="text-red-500">*</span>
+                    </Label>
+                    <Input id="email" name="email" type="email" placeholder="you@email.com" required />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="roll">
+                      Roll Number <span className="text-red-500">*</span>
+                    </Label>
+                    <Input id="roll" name="roll" placeholder="e.g. 21CS1234" required />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">
+                      Mobile Number <span className="text-red-500">*</span>
+                    </Label>
+                    <Input id="phone" name="phone" type="tel" placeholder="e.g. 9876543210" required />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="intrigue">
+                      What intrigues you the most about web development? <span className="text-red-500">*</span>
+                    </Label>
+                    <textarea
+                      id="intrigue"
+                      name="intrigue"
+                      className="min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Tell us what draws you in..."
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="topic">
+                      Any particular topic you want to learn in the workshop? <span className="text-red-500">*</span>
+                    </Label>
+                    <textarea
+                      id="topic"
+                      name="topic"
+                      className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="e.g. React, backend, deployment..."
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="knowledge">
+                      Your current knowledge in this domain <span className="text-red-500">*</span>
+                    </Label>
+                    <select
+                      id="knowledge"
+                      name="knowledge"
+                      required
+                      defaultValue=""
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="" disabled>
+                        Select one
+                      </option>
+                      {KNOWLEDGE_OPTIONS.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="question">Any (funny) questions you want to ask us?</Label>
+                    <textarea
+                      id="question"
+                      name="question"
+                      className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="We'll answer at the bootcamp!"
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800" disabled={loading}>
+                    {loading ? "Submitting..." : "Register"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
-
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[425px] custom-scrollbar">
-            <DialogHeader>
-              <DialogTitle>Register for the Bootcamp</DialogTitle>
-            </DialogHeader>
-            <form ref={formRef} className="space-y-6 py-4" onSubmit={handleSubmit}>
-              <div className="space-y-2">
-                <Label htmlFor="name">
-                  Name <span className="text-red-500">*</span>
-                </Label>
-                <Input id="name" name="name" placeholder="Your Name" required />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">
-                  Email <span className="text-red-500">*</span>
-                </Label>
-                <Input id="email" name="email" type="email" placeholder="you@email.com" required />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="roll">
-                  Roll Number <span className="text-red-500">*</span>
-                </Label>
-                <Input id="roll" name="roll" placeholder="e.g. 21CS1234" required />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">
-                  Mobile Number <span className="text-red-500">*</span>
-                </Label>
-                <Input id="phone" name="phone" type="tel" placeholder="e.g. 9876543210" required />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="intrigue">
-                  What intrigues you the most about web development? <span className="text-red-500">*</span>
-                </Label>
-                <textarea
-                  id="intrigue"
-                  name="intrigue"
-                  className="min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Tell us what draws you in..."
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="topic">
-                  Any particular topic you want to learn in the workshop? <span className="text-red-500">*</span>
-                </Label>
-                <textarea
-                  id="topic"
-                  name="topic"
-                  className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="e.g. React, backend, deployment..."
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="knowledge">
-                  Your current knowledge in this domain <span className="text-red-500">*</span>
-                </Label>
-                <select
-                  id="knowledge"
-                  name="knowledge"
-                  required
-                  defaultValue=""
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <option value="" disabled>
-                    Select one
-                  </option>
-                  {KNOWLEDGE_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="question">Any (funny) questions you want to ask us?</Label>
-                <textarea
-                  id="question"
-                  name="question"
-                  className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="We'll answer at the bootcamp!"
-                />
-              </div>
-
-              <Button type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800" disabled={loading}>
-                {loading ? "Submitting..." : "Register"}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   )

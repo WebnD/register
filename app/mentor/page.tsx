@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Html5Qrcode } from "html5-qrcode"
 import { CheckCircle2, AlertCircle, Camera, X } from "lucide-react"
+import { EVENT, DayKey, dayLabel, defaultScanDayKey, todayEventDayKey } from "@/lib/event"
 
 type ScanResult =
-  | { kind: "success"; name: string }
-  | { kind: "already"; name: string; at?: string; by?: string }
+  | { kind: "success"; name: string; day: DayKey }
+  | { kind: "already"; name: string; day: DayKey; at?: string; by?: string }
   | { kind: "error"; message: string }
 
 export default function MentorPage() {
@@ -20,6 +21,10 @@ export default function MentorPage() {
 
   const [mentorName, setMentorName] = useState("")
   const [nameConfirmed, setNameConfirmed] = useState(false)
+
+  // Which day this mentor is marking. Pre-selected to today (IST); tap to change.
+  const [selectedDay, setSelectedDay] = useState<DayKey>("day1")
+  const [isEventDay, setIsEventDay] = useState(true)
 
   const [scanning, setScanning] = useState(false)
   const [result, setResult] = useState<ScanResult | null>(null)
@@ -33,6 +38,12 @@ export default function MentorPage() {
     if (typeof window !== "undefined" && sessionStorage.getItem("mentorAuthed") === "true") {
       setAuthed(true)
     }
+  }, [])
+
+  // Auto-select today's event day once, on mount (client-side, IST).
+  useEffect(() => {
+    setSelectedDay(defaultScanDayKey())
+    setIsEventDay(todayEventDayKey() !== null)
   }, [])
 
   const handleLogin = async () => {
@@ -111,17 +122,24 @@ export default function MentorPage() {
       const res = await fetch("/api/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: { scannedData, markedBy: mentorName } }),
+        body: JSON.stringify({ data: { scannedData, markedBy: mentorName, day: selectedDay } }),
       })
       const json = await res.json()
       if (!res.ok || !json.success) {
         throw new Error(json.message || "Failed")
       }
       const rec = json.record || {}
+      const day: DayKey = json.day || selectedDay
       if (json.alreadyMarked) {
-        setResult({ kind: "already", name: rec.name, at: rec.attendedAt, by: rec.markedBy })
+        setResult({
+          kind: "already",
+          name: rec.name,
+          day,
+          at: rec[`${day}At`],
+          by: rec[`${day}By`],
+        })
       } else {
-        setResult({ kind: "success", name: rec.name })
+        setResult({ kind: "success", name: rec.name, day })
       }
     } catch (e: any) {
       setResult({ kind: "error", message: "Could not find or mark this ticket." })
@@ -202,12 +220,45 @@ export default function MentorPage() {
           <span className="text-sm text-muted-foreground">Mentor: {mentorName}</span>
         </div>
 
+        {/* Day selector — pre-set to today, tap to change */}
+        <div className="bg-white rounded-lg shadow p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-[#76232F]">Marking attendance for</Label>
+            {!isEventDay && (
+              <span className="text-xs text-amber-600">Today isn&apos;t an event day</span>
+            )}
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {EVENT.days.map((d) => {
+              const active = d.key === selectedDay
+              return (
+                <button
+                  key={d.key}
+                  type="button"
+                  onClick={() => setSelectedDay(d.key)}
+                  disabled={scanning}
+                  className={
+                    "rounded-lg border p-2 text-center transition-colors " +
+                    (active
+                      ? "bg-[#76232F] text-white border-[#76232F]"
+                      : "bg-[#FDF7F4] text-[#76232F] border-[#76232F]/40 hover:border-[#76232F]") +
+                    (scanning ? " opacity-60 cursor-not-allowed" : "")
+                  }
+                >
+                  <span className="block text-sm font-semibold">{d.label}</span>
+                  <span className="block text-[11px] opacity-80">{d.date.replace(" 2026", "")}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
         {!scanning && !result && (
           <Button
             onClick={() => setScanning(true)}
             className="w-full bg-[#76232F] hover:bg-[#76232F]/90 text-white"
           >
-            <Camera className="mr-2 h-5 w-5" /> Scan a ticket
+            <Camera className="mr-2 h-5 w-5" /> Scan for {dayLabel(selectedDay)}
           </Button>
         )}
 
@@ -221,7 +272,8 @@ export default function MentorPage() {
             >
               <X />
             </Button>
-            <h2 className="text-lg font-semibold text-black mb-3">Point at the QR code</h2>
+            <h2 className="text-lg font-semibold text-black mb-1">Point at the QR code</h2>
+            <p className="text-sm text-muted-foreground mb-3">Marking {dayLabel(selectedDay)}</p>
             <div id="qr-reader" className="w-full" />
             {busy && <p className="text-center text-sm text-muted-foreground mt-3">Marking…</p>}
           </div>
@@ -233,7 +285,7 @@ export default function MentorPage() {
               <>
                 <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
                 <h2 className="text-xl font-semibold">{result.name}</h2>
-                <p className="text-green-700">Marked present ✓</p>
+                <p className="text-green-700">Marked present for {dayLabel(result.day)} ✓</p>
               </>
             )}
             {result.kind === "already" && (
@@ -241,7 +293,7 @@ export default function MentorPage() {
                 <AlertCircle className="mx-auto h-12 w-12 text-amber-500" />
                 <h2 className="text-xl font-semibold">{result.name}</h2>
                 <p className="text-amber-600">
-                  Already marked
+                  Already marked for {dayLabel(result.day)}
                   {result.by ? ` by ${result.by}` : ""}
                   {result.at ? ` at ${new Date(result.at).toLocaleTimeString()}` : ""}.
                 </p>
