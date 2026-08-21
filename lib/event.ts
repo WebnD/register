@@ -7,6 +7,8 @@
 // scan sends. The `iso` field ("YYYY-MM-DD") auto-detects which day "today" is,
 // in India time, so the mentor page pre-selects it.
 
+import { MoreHorizontal } from "lucide-react"
+
 export type DayKey = "day1" | "day2"
 
 export interface EventDay {
@@ -18,11 +20,20 @@ export interface EventDay {
   topics: string[]  // curriculum shown on the landing schedule
 }
 
+export interface WhatsAppGroup {
+  label: string
+  url: string
+}
+
 export const EVENT = {
   name: "Design Bootcamp",
   tagline: "Be a part of something creative",
   venue: "UHL",
   campus: "IIT Bhubaneswar",
+  whatsappGroup: {
+    label: "Join the WhatsApp Group to stay ahead of the compettion and participate in games and challenges",
+    url: "https://chat.whatsapp.com/KK5Msvq1QSS5OpfoObZ7yS",
+  } as WhatsAppGroup,
   days: [
     {
       key: "day1",
@@ -39,8 +50,9 @@ export const EVENT = {
       iso: "2026-09-05",
       time: "Time to be announced",
       topics: ["Figma Basics", "Motion Graphics", "Blender"],
-    },
+    }
   ] as EventDay[],
+
 }
 
 // All valid day keys, in order.
