@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MapPin, CalendarDays } from "lucide-react"
+import { MapPin, CalendarDays, MessageCircle } from "lucide-react"
 import { EVENT } from "@/lib/event"
 
 const EXPERIENCE_OPTIONS = ["Complete beginner", "Some basics", "Intermediate", "Advanced"]
@@ -95,6 +95,19 @@ export default function EventPage() {
                   <p className="mt-1 pl-6 text-sm text-[#c9a876]">{d.topics.join(" · ")}</p>
                 </div>
               ))}
+
+              <a
+                href={EVENT.whatsappGroup.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-start gap-3 rounded-lg border border-[#2a221a] bg-[#141009] p-3 transition-colors hover:border-[#991d1d]"
+              >
+                <MessageCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#25d366]" />
+                <span>
+                  <span className="block font-semibold text-[#ece0c8]">Join the WhatsApp Group</span>
+                  <span className="mt-1 block text-sm text-[#a89878]">{EVENT.whatsappGroup.label}</span>
+                </span>
+              </a>
 
               <div className="flex items-center gap-2 pt-1">
                 <MapPin className="h-5 w-5 text-[#991d1d]" />
