@@ -23,6 +23,10 @@ export const EVENT = {
   tagline: "Be a part of something creative",
   venue: "UHL",
   campus: "IIT Bhubaneswar",
+  whatsappGroup: {
+    label: "Join the WhatsApp Group to stay ahead of the compettion and participate in games and challenges",
+    url: "https://chat.whatsapp.com/KK5Msvq1QSS5OpfoObZ7yS",
+  } as WhatsAppGroup,
   days: [
     {
       key: "day1",
