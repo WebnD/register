@@ -2,32 +2,45 @@
 // ticket email, the mentor scan page, and the attendance board. Edit here and
 // everything updates.
 //
-// Each day now carries a stable `key` ("day1" | "day2" | "day3") — that key is
-// what gets stored on each student's document (day1/day2/day3 booleans) and what
-// the mentor scan sends. The `iso` field ("YYYY-MM-DD") is used to auto-detect
-// which day "today" is, in India time, so the mentor page can pre-select it.
+// Each day carries a stable `key` ("day1" | "day2") — that key is what gets
+// stored on each participant's document (day1/day2 booleans) and what the mentor
+// scan sends. The `iso` field ("YYYY-MM-DD") auto-detects which day "today" is,
+// in India time, so the mentor page pre-selects it.
 
-export type DayKey = "day1" | "day2" | "day3"
+export type DayKey = "day1" | "day2"
 
 export interface EventDay {
   key: DayKey
-  label: string   // "Day 1"
-  date: string    // "16 August 2026" (display)
-  iso: string     // "2026-08-16"     (for today-matching)
-  time: string
+  label: string     // "Day 01"
+  date: string      // "4 September 2026" (display)
+  iso: string       // "2026-09-04"       (for today-matching)
+  time: string      // shown on landing + ticket
+  topics: string[]  // curriculum shown on the landing schedule
 }
 
 export const EVENT = {
-  name: "Web Development Bootcamp",
-  venue: "LHL",
+  name: "Design Bootcamp",
+  tagline: "Be a part of something creative",
+  venue: "UHL",
   campus: "IIT Bhubaneswar",
   days: [
-    { key: "day1", label: "Day 1", date: "16 August 2026", iso: "2026-08-16", time: "10:00 AM – 1:00 PM" },
-    { key: "day2", label: "Day 2", date: "17 August 2026", iso: "2026-08-17", time: "5:30 PM – 9:00 PM" },
-    { key: "day3", label: "Day 3", date: "19 August 2026", iso: "2026-08-19", time: "5:30 PM – 9:00 PM" },
+    {
+      key: "day1",
+      label: "Day 01",
+      date: "4 September 2026",
+      iso: "2026-09-04",
+      time: "Time to be announced",
+      topics: ["Design Theory", "Colour Theory", "Figma Fundamentals"],
+    },
+    {
+      key: "day2",
+      label: "Day 02",
+      date: "5 September 2026",
+      iso: "2026-09-05",
+      time: "Time to be announced",
+      topics: ["Figma Basics", "Motion Graphics", "Blender"],
+    },
   ] as EventDay[],
-
-  WhatsappGroupLink: "https://chat.whatsapp.com/CHhIzCIyEIi6DC4zQEXaWG?s=qt&p=a&ilr=4",
 }
 
 // All valid day keys, in order.
@@ -59,9 +72,8 @@ export function todayEventDayKey(d: Date = new Date()): DayKey | null {
 }
 
 // The day to PRE-SELECT on the mentor page: today if it's an event day,
-// otherwise the last event day that has already started (so a late/after-hours
-// scan still lands sensibly), falling back to Day 1. The mentor can always
-// override with a tap.
+// otherwise the last event day that has already started, falling back to Day 1.
+// The mentor can always override with a tap.
 export function defaultScanDayKey(d: Date = new Date()): DayKey {
   const exact = todayEventDayKey(d)
   if (exact) return exact

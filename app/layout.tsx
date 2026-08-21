@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "WebnD Induction Registration",
-  description: "Generated for collecting registrations for WebnD Induction",
+  title: "Design Bootcamp Registration",
+  description: "Register for the Design Bootcamp — Design Theory, Colour Theory, Figma, Motion Graphics & Blender.",
   icons: {
     icon: '/logo.png', // Favicon added here
   },

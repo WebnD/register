@@ -22,7 +22,6 @@ export default function MentorPage() {
   const [mentorName, setMentorName] = useState("")
   const [nameConfirmed, setNameConfirmed] = useState(false)
 
-  // Which day this mentor is marking. Pre-selected to today (IST); tap to change.
   const [selectedDay, setSelectedDay] = useState<DayKey>("day1")
   const [isEventDay, setIsEventDay] = useState(true)
 
@@ -33,14 +32,12 @@ export default function MentorPage() {
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null)
   const handledRef = useRef(false)
 
-  // Restore auth within the same browser session
   useEffect(() => {
     if (typeof window !== "undefined" && sessionStorage.getItem("mentorAuthed") === "true") {
       setAuthed(true)
     }
   }, [])
 
-  // Auto-select today's event day once, on mount (client-side, IST).
   useEffect(() => {
     setSelectedDay(defaultScanDayKey())
     setIsEventDay(todayEventDayKey() !== null)
@@ -69,7 +66,6 @@ export default function MentorPage() {
     }
   }
 
-  // Scanner lifecycle
   useEffect(() => {
     if (!scanning) return
     handledRef.current = false
@@ -84,9 +80,7 @@ export default function MentorPage() {
         handledRef.current = true
         handleScan(decodedText)
       },
-      () => {
-        /* per-frame decode misses — ignore */
-      }
+      () => {}
     ).catch((err) => {
       console.error("Camera start failed:", err)
       setResult({ kind: "error", message: "Unable to access the camera. Check permissions." })
@@ -96,10 +90,7 @@ export default function MentorPage() {
     return () => {
       const active = html5QrCodeRef.current
       if (active) {
-        active
-          .stop()
-          .then(() => active.clear())
-          .catch(() => {})
+        active.stop().then(() => active.clear()).catch(() => {})
         html5QrCodeRef.current = null
       }
     }
@@ -107,7 +98,6 @@ export default function MentorPage() {
 
   const handleScan = async (scannedData: string) => {
     setBusy(true)
-    // stop the camera immediately after a read
     const active = html5QrCodeRef.current
     if (active) {
       try {
@@ -131,13 +121,7 @@ export default function MentorPage() {
       const rec = json.record || {}
       const day: DayKey = json.day || selectedDay
       if (json.alreadyMarked) {
-        setResult({
-          kind: "already",
-          name: rec.name,
-          day,
-          at: rec[`${day}At`],
-          by: rec[`${day}By`],
-        })
+        setResult({ kind: "already", name: rec.name, day, at: rec[`${day}At`], by: rec[`${day}By`] })
       } else {
         setResult({ kind: "success", name: rec.name, day })
       }
@@ -153,14 +137,16 @@ export default function MentorPage() {
     setScanning(true)
   }
 
-  // ── Password gate ──
+  const card = "bg-[#141009] border border-[#2a221a] rounded-lg"
+  const primaryBtn = "bg-[#991d1d] hover:bg-[#b02424] text-[#f4ead6]"
+
   if (!authed) {
     return (
-      <div className="min-h-screen bg-[#FDF7F4] flex items-center justify-center p-6">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm space-y-4">
-          <h1 className="text-2xl font-bold text-[#76232F]">Mentor Access</h1>
+      <div className="min-h-screen bg-[#0c0c0c] text-[#d8c6a7] flex items-center justify-center p-6">
+        <div className={`${card} p-8 shadow-md w-full max-w-sm space-y-4`}>
+          <h1 className="text-2xl font-black uppercase tracking-wide text-[#ece0c8]">Mentor Access</h1>
           <div className="space-y-2">
-            <Label htmlFor="pw">Password</Label>
+            <Label htmlFor="pw" className="text-[#d8c6a7]">Password</Label>
             <Input
               id="pw"
               type="password"
@@ -168,14 +154,11 @@ export default function MentorPage() {
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               placeholder="Enter password"
+              className="bg-[#0f0b08] border-[#3a2f24] text-[#e8dcc0] placeholder:text-[#7d6f5a]"
             />
-            {authError && <p className="text-sm text-red-600">{authError}</p>}
+            {authError && <p className="text-sm text-red-400">{authError}</p>}
           </div>
-          <Button
-            onClick={handleLogin}
-            disabled={checking || !password}
-            className="w-full bg-[#76232F] hover:bg-[#76232F]/90 text-white"
-          >
+          <Button onClick={handleLogin} disabled={checking || !password} className={`w-full ${primaryBtn}`}>
             {checking ? "Checking..." : "Enter"}
           </Button>
         </div>
@@ -183,27 +166,23 @@ export default function MentorPage() {
     )
   }
 
-  // ── Mentor name ──
   if (!nameConfirmed) {
     return (
-      <div className="min-h-screen bg-[#FDF7F4] flex items-center justify-center p-6">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm space-y-4">
-          <h1 className="text-2xl font-bold text-[#76232F]">Who's scanning?</h1>
+      <div className="min-h-screen bg-[#0c0c0c] text-[#d8c6a7] flex items-center justify-center p-6">
+        <div className={`${card} p-8 shadow-md w-full max-w-sm space-y-4`}>
+          <h1 className="text-2xl font-black uppercase tracking-wide text-[#ece0c8]">Who&apos;s scanning?</h1>
           <div className="space-y-2">
-            <Label htmlFor="mname">Your name</Label>
+            <Label htmlFor="mname" className="text-[#d8c6a7]">Your name</Label>
             <Input
               id="mname"
               value={mentorName}
               onChange={(e) => setMentorName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && mentorName.trim() && setNameConfirmed(true)}
               placeholder="Mentor name"
+              className="bg-[#0f0b08] border-[#3a2f24] text-[#e8dcc0] placeholder:text-[#7d6f5a]"
             />
           </div>
-          <Button
-            onClick={() => mentorName.trim() && setNameConfirmed(true)}
-            disabled={!mentorName.trim()}
-            className="w-full bg-[#76232F] hover:bg-[#76232F]/90 text-white"
-          >
+          <Button onClick={() => mentorName.trim() && setNameConfirmed(true)} disabled={!mentorName.trim()} className={`w-full ${primaryBtn}`}>
             Continue
           </Button>
         </div>
@@ -211,24 +190,20 @@ export default function MentorPage() {
     )
   }
 
-  // ── Scan console ──
   return (
-    <div className="min-h-screen bg-[#FDF7F4] p-6">
+    <div className="min-h-screen bg-[#0c0c0c] text-[#d8c6a7] p-6">
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-[#76232F]">Attendance</h1>
-          <span className="text-sm text-muted-foreground">Mentor: {mentorName}</span>
+          <h1 className="text-2xl font-black uppercase tracking-wide text-[#ece0c8]">Attendance</h1>
+          <span className="text-sm text-[#a89878]">Mentor: {mentorName}</span>
         </div>
 
-        {/* Day selector — pre-set to today, tap to change */}
-        <div className="bg-white rounded-lg shadow p-4 space-y-3">
+        <div className={`${card} p-4 space-y-3`}>
           <div className="flex items-center justify-between">
-            <Label className="text-[#76232F]">Marking attendance for</Label>
-            {!isEventDay && (
-              <span className="text-xs text-amber-600">Today isn&apos;t an event day</span>
-            )}
+            <Label className="text-[#c9a876]">Marking attendance for</Label>
+            {!isEventDay && <span className="text-xs text-amber-500">Today isn&apos;t an event day</span>}
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {EVENT.days.map((d) => {
               const active = d.key === selectedDay
               return (
@@ -240,8 +215,8 @@ export default function MentorPage() {
                   className={
                     "rounded-lg border p-2 text-center transition-colors " +
                     (active
-                      ? "bg-[#76232F] text-white border-[#76232F]"
-                      : "bg-[#FDF7F4] text-[#76232F] border-[#76232F]/40 hover:border-[#76232F]") +
+                      ? "bg-[#991d1d] text-[#f4ead6] border-[#991d1d]"
+                      : "bg-[#0f0b08] text-[#d8c6a7] border-[#3a2f24] hover:border-[#991d1d]") +
                     (scanning ? " opacity-60 cursor-not-allowed" : "")
                   }
                 >
@@ -254,45 +229,37 @@ export default function MentorPage() {
         </div>
 
         {!scanning && !result && (
-          <Button
-            onClick={() => setScanning(true)}
-            className="w-full bg-[#76232F] hover:bg-[#76232F]/90 text-white"
-          >
+          <Button onClick={() => setScanning(true)} className={`w-full ${primaryBtn}`}>
             <Camera className="mr-2 h-5 w-5" /> Scan for {dayLabel(selectedDay)}
           </Button>
         )}
 
         {scanning && (
-          <div className="bg-white rounded-lg shadow p-4 relative">
-            <Button
-              onClick={() => setScanning(false)}
-              variant="outline"
-              className="absolute top-2 right-2 p-2 z-10"
-              title="Cancel"
-            >
+          <div className={`${card} p-4 relative`}>
+            <Button onClick={() => setScanning(false)} variant="outline" className="absolute top-2 right-2 p-2 z-10 bg-[#0f0b08] border-[#3a2f24] text-[#d8c6a7]" title="Cancel">
               <X />
             </Button>
-            <h2 className="text-lg font-semibold text-black mb-1">Point at the QR code</h2>
-            <p className="text-sm text-muted-foreground mb-3">Marking {dayLabel(selectedDay)}</p>
+            <h2 className="text-lg font-semibold text-[#ece0c8] mb-1">Point at the QR code</h2>
+            <p className="text-sm text-[#a89878] mb-3">Marking {dayLabel(selectedDay)}</p>
             <div id="qr-reader" className="w-full" />
-            {busy && <p className="text-center text-sm text-muted-foreground mt-3">Marking…</p>}
+            {busy && <p className="text-center text-sm text-[#a89878] mt-3">Marking…</p>}
           </div>
         )}
 
         {result && (
-          <div className="bg-white rounded-lg shadow p-6 text-center space-y-3">
+          <div className={`${card} p-6 text-center space-y-3`}>
             {result.kind === "success" && (
               <>
-                <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
-                <h2 className="text-xl font-semibold">{result.name}</h2>
-                <p className="text-green-700">Marked present for {dayLabel(result.day)} ✓</p>
+                <CheckCircle2 className="mx-auto h-12 w-12 text-green-500" />
+                <h2 className="text-xl font-semibold text-[#ece0c8]">{result.name}</h2>
+                <p className="text-green-400">Marked present for {dayLabel(result.day)} ✓</p>
               </>
             )}
             {result.kind === "already" && (
               <>
-                <AlertCircle className="mx-auto h-12 w-12 text-amber-500" />
-                <h2 className="text-xl font-semibold">{result.name}</h2>
-                <p className="text-amber-600">
+                <AlertCircle className="mx-auto h-12 w-12 text-amber-400" />
+                <h2 className="text-xl font-semibold text-[#ece0c8]">{result.name}</h2>
+                <p className="text-amber-400">
                   Already marked for {dayLabel(result.day)}
                   {result.by ? ` by ${result.by}` : ""}
                   {result.at ? ` at ${new Date(result.at).toLocaleTimeString()}` : ""}.
@@ -301,11 +268,11 @@ export default function MentorPage() {
             )}
             {result.kind === "error" && (
               <>
-                <AlertCircle className="mx-auto h-12 w-12 text-red-600" />
-                <p className="text-red-700">{result.message}</p>
+                <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
+                <p className="text-red-400">{result.message}</p>
               </>
             )}
-            <Button onClick={scanNext} className="w-full bg-[#76232F] hover:bg-[#76232F]/90 text-white">
+            <Button onClick={scanNext} className={`w-full ${primaryBtn}`}>
               Scan next
             </Button>
           </div>
