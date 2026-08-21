@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// "16 August 2026" -> "AUG 16"
+// "4 September 2026" -> "SEP 4"
 function shortDate(full: string) {
   const parts = full.split(' ');
   if (parts.length >= 2) return `${parts[1].slice(0, 3).toUpperCase()} ${parts[0]}`;
@@ -17,7 +17,8 @@ function shortDate(full: string) {
 }
 
 // Builds the ticket HTML. qrSrc is "cid:qrcode" for email; a data URI is used
-// only by the standalone preview.
+// only by the standalone preview. Retro red / black / cream theme to match the
+// event poster. Email-safe: tables + inline styles only.
 export function buildTicketHtml(name: string, qrSrc: string) {
   const NAME = (name || '').toUpperCase();
 
@@ -25,19 +26,22 @@ export function buildTicketHtml(name: string, qrSrc: string) {
     .map(
       (d) => `
       <tr>
-        <td style="padding:3px 16px 3px 0;color:#5eead4;font-family:'Courier New',Courier,monospace;font-size:12px;white-space:nowrap;">${shortDate(d.date)}</td>
-        <td style="padding:3px 0;color:#cbd5e1;font-family:'Courier New',Courier,monospace;font-size:12px;white-space:nowrap;">${d.time}</td>
+        <td style="padding:4px 16px 4px 0;color:#c9a876;font-family:'Courier New',Courier,monospace;font-size:12px;white-space:nowrap;">${shortDate(d.date)}</td>
+        <td style="padding:4px 0;color:#d8c6a7;font-family:'Courier New',Courier,monospace;font-size:12px;">${d.time}</td>
+      </tr>
+      <tr>
+        <td colspan="2" style="padding:0 0 8px;color:#8a7a5f;font-family:'Courier New',Courier,monospace;font-size:10px;">${d.topics.join(' · ')}</td>
       </tr>`
     )
     .join('');
 
   return `
-  <div style="background:#05070a;padding:28px 12px;font-family:'Courier New',Courier,monospace;">
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" width="600" style="max-width:600px;width:100%;background:#0b0f16;border:1px solid #1c7f74;border-radius:14px;">
+  <div style="background:#0c0c0c;padding:28px 12px;font-family:'Courier New',Courier,monospace;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" width="600" style="max-width:600px;width:100%;background:#141009;border:1px solid #3a2f24;border-radius:14px;">
       <tr>
-        <td style="padding:14px 22px 8px;border-bottom:1px solid #12352f;">
-          <span style="color:#3f6f68;font-size:11px;letter-spacing:2px;">// ENTRY TICKET</span>
-          <span style="float:right;color:#3f6f68;font-size:11px;letter-spacing:2px;">WEB &amp; DESIGN SOCIETY</span>
+        <td style="padding:14px 22px 8px;border-bottom:1px solid #2a221a;">
+          <span style="color:#8a7a5f;font-size:11px;letter-spacing:2px;">// ENTRY TICKET</span>
+          <span style="float:right;color:#8a7a5f;font-size:11px;letter-spacing:2px;">WEB &amp; DESIGN SOCIETY</span>
         </td>
       </tr>
       <tr>
@@ -46,40 +50,40 @@ export function buildTicketHtml(name: string, qrSrc: string) {
             <tr>
               <!-- LEFT -->
               <td valign="top" style="width:62%;padding-right:18px;">
-                <div style="color:#f1f5f9;font-size:26px;font-weight:bold;letter-spacing:2px;line-height:1.1;">WEB DEV</div>
-                <div style="color:#2dd4bf;font-size:26px;font-weight:bold;letter-spacing:2px;line-height:1.1;">BOOTCAMP</div>
-                <div style="color:#3f6f68;font-size:11px;letter-spacing:1px;margin-top:6px;">[ v1.0 INITIALIZATION ]</div>
+                <div style="color:#ece0c8;font-size:28px;font-weight:bold;letter-spacing:3px;line-height:1.05;">DESIGN</div>
+                <div style="color:#991d1d;font-size:28px;font-weight:bold;letter-spacing:3px;line-height:1.05;">BOOTCAMP</div>
+                <div style="color:#8a7a5f;font-size:11px;letter-spacing:1px;margin-top:6px;">[ ${EVENT.tagline.toUpperCase()} ]</div>
 
-                <div style="color:#5eead4;font-size:10px;letter-spacing:2px;margin-top:22px;">AUTHORIZED PERSONNEL</div>
-                <div style="display:inline-block;color:#2dd4bf;font-size:18px;font-weight:bold;letter-spacing:1px;border-bottom:2px solid #2dd4bf;padding:4px 2px 6px;margin-top:6px;">[ ${NAME} ]</div>
+                <div style="color:#c9a876;font-size:10px;letter-spacing:2px;margin-top:22px;">ADMIT</div>
+                <div style="display:inline-block;color:#ece0c8;font-size:18px;font-weight:bold;letter-spacing:1px;border-bottom:2px solid #991d1d;padding:4px 2px 6px;margin-top:6px;">[ ${NAME} ]</div>
 
-                <div style="color:#5eead4;font-size:10px;letter-spacing:2px;margin-top:22px;">// SCHEDULE</div>
+                <div style="color:#c9a876;font-size:10px;letter-spacing:2px;margin-top:22px;">// SCHEDULE</div>
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px;">
                   ${scheduleRows}
                 </table>
 
-                <div style="color:#5eead4;font-size:10px;letter-spacing:2px;margin-top:18px;">// VENUE</div>
-                <div style="color:#cbd5e1;font-size:13px;margin-top:4px;">${EVENT.venue} — ${EVENT.campus}</div>
+                <div style="color:#c9a876;font-size:10px;letter-spacing:2px;margin-top:12px;">// VENUE</div>
+                <div style="color:#d8c6a7;font-size:13px;margin-top:4px;">${EVENT.venue} — ${EVENT.campus}</div>
               </td>
 
               <!-- RIGHT: QR only -->
               <td valign="middle" align="center" style="width:38%;">
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td style="padding:12px;border:1px solid #2dd4bf;border-radius:10px;background:#0d1117;">
+                    <td style="padding:12px;border:1px solid #991d1d;border-radius:10px;background:#0f0b08;">
                       <img src="${qrSrc}" alt="Entry QR" width="150" height="150" style="display:block;background:#ffffff;padding:6px;border-radius:4px;" />
                     </td>
                   </tr>
                 </table>
-                <div style="color:#3f6f68;font-size:10px;letter-spacing:2px;margin-top:10px;">// SCAN AT ENTRY</div>
+                <div style="color:#8a7a5f;font-size:10px;letter-spacing:2px;margin-top:10px;">// SCAN AT ENTRY</div>
               </td>
             </tr>
           </table>
         </td>
       </tr>
       <tr>
-        <td style="padding:10px 22px 14px;border-top:1px solid #12352f;">
-          <span style="color:#3f6f68;font-size:10px;letter-spacing:1px;">This ticket is unique to you. Bring it on each day.</span>
+        <td style="padding:10px 22px 14px;border-top:1px solid #2a221a;">
+          <span style="color:#8a7a5f;font-size:10px;letter-spacing:1px;">This ticket is unique to you. Bring it on each day.</span>
         </td>
       </tr>
     </table>

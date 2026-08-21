@@ -1,5 +1,6 @@
 import { ID, Query } from "node-appwrite";
 import { database } from "./appwrite.config";
+import { isDayKey, dayLabel } from "./event";
 
 const DATABASE_ID = process.env.DATABASE_ID!;
 const REGISTER_ID = process.env.REGISTER_ID!;
@@ -16,11 +17,14 @@ export async function CreateRegister(data: Register) {
         email: data.email,
         roll: data.roll ?? "",
         phone: data.phone ?? "",
-        intrigue: data.intrigue,
-        topic: data.topic ?? "",
-        knowledge: data.knowledge,
+        motivation: data.motivation,
+        experience: data.experience,
+        tools: data.tools ?? "",
+        learn: data.learn ?? "",
+        portfolio: data.portfolio ?? "",
         question: data.question ?? "",
-        attended: false,
+        day1: false,
+        day2: false,
         time: new Date().toISOString(),
       }
     );
@@ -31,18 +35,27 @@ export async function CreateRegister(data: Register) {
   }
 }
 
-// Marks a participant present. Idempotent: if already attended, returns the
-// existing record instead of overwriting the original mentor/time.
+// Marks a participant present for ONE specific event day (day1 | day2).
+// Idempotent PER DAY: if they're already marked for THAT day, it returns the
+// existing record without overwriting who/when first scanned them — but a scan
+// on a different day still marks that day. This is what lets someone be present
+// on Day 01 but not Day 02, etc.
 export async function MarkAttendance(data: Attendance) {
   try {
+    const dayKey = data.day;
+    if (!isDayKey(dayKey)) {
+      throw new Error("Invalid or missing event day.");
+    }
+
     const existing = await database.getDocument(
       DATABASE_ID,
       REGISTER_ID,
       data.scannedData
     );
 
-    if ((existing as any).attended) {
-      return { alreadyMarked: true, record: existing };
+    // Already present for THIS day → don't overwrite the original scan.
+    if ((existing as any)[dayKey]) {
+      return { alreadyMarked: true, record: existing, day: dayKey };
     }
 
     const updated = await database.updateDocument(
@@ -50,27 +63,25 @@ export async function MarkAttendance(data: Attendance) {
       REGISTER_ID,
       data.scannedData,
       {
-        attended: true,
-        attendedAt: new Date().toISOString(),
-        markedBy: data.markedBy,
+        [dayKey]: true,
+        [`${dayKey}At`]: new Date().toISOString(),
+        [`${dayKey}By`]: data.markedBy,
       }
     );
 
-    return { alreadyMarked: false, record: updated };
+    return { alreadyMarked: false, record: updated, day: dayKey };
   } catch (error) {
-    console.error("Failed to mark attendance: ", error);
+    console.error(
+      `Failed to mark attendance for ${dayLabel(data?.day as any)}: `,
+      error
+    );
     throw new Error("Failed to mark attendance");
   }
 }
 
 export async function FetchInfo(id: string) {
   try {
-    const response = await database.getDocument(
-      DATABASE_ID,
-      REGISTER_ID,
-      id
-    );
-    return response;
+    return await database.getDocument(DATABASE_ID, REGISTER_ID, id);
   } catch (error) {
     console.error("Failed to fetch the info: ", error);
     throw new Error("Failed to fetch the info");
